@@ -1,29 +1,57 @@
+import { useState } from 'react'
+
 import heroImage from "../assets/images/hero.jpg"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub, faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons'
+
+import SocialLinks from './SocialLinks'
+import EditButton from './EditButton'
+import TextEntry from './TextEntry'
 
 const ProfileCard = () => {
-  const linksSize = "3x"
+  const [profilePicture, setProfilePicture] = useState(heroImage)
+  const [username, setUsername] = useState("Monsieur Maou")
+  const [desc, setDesc] = useState("Maou")
 
+  const changeProfilePicture = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      const imageUrl = URL.createObjectURL(file)
+      setProfilePicture(imageUrl)
+    }
+  }
+
+  const changeValue = (newValue, hookHandler) => {
+    if(newValue.length < 3) {
+      alert("Le nom d'utilisateur ne peut pas être inférieur à 3 caractères")
+      return
+    }
+    hookHandler(newValue)
+  }
+  
   return (
     <div className="profile-card">
       <div className="image-wrapper">
-        <img src={heroImage} alt="Photo de profil de Monsieur Maou" />
+        <label htmlFor='profile-change'>
+          <input type='file' id='profile-change' onChange={changeProfilePicture} />
+          <img src={profilePicture} alt="Photo de profil de Monsieur Maou" />
+          <div className='hover-change'>
+            <EditButton />
+          </div>
+        </label>
       </div>
       <div className="hero-details">
-        <h1>Monsieur Maou</h1>
-        <p>Maou</p>
-        <div className="social-links">
-          <a href="https://x.com/Ezionis" target="_blank" rel="noopener noreferrer">
-            <FontAwesomeIcon className="link-icon" icon={faTwitter} size={linksSize} aria-label="Twitter" />
-          </a>
-          <a href="https://x.com/Ezionis" target="_blank" rel="noopener noreferrer">
-            <FontAwesomeIcon className="link-icon" icon={faInstagram} size={linksSize} aria-label="Instagram" />
-          </a>
-          <a href="https://github.com/Eziones" target="_blank" rel="noopener noreferrer">
-            <FontAwesomeIcon className="link-icon" icon={faGithub} size={linksSize} aria-label="GitHub" />
-          </a>
-        </div>
+        <TextEntry 
+          value={username}
+          confirmEdit = {changeValue}
+          hookHandler = {setUsername}
+          textSize = "large"
+        />
+        <TextEntry 
+          value={desc}
+          confirmEdit = {changeValue}
+          hookHandler = {setDesc}
+          textSize = "small"
+        />
+        <SocialLinks />
       </div>
     </div>
   )
